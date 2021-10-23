@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Owner extends Model
+class Owner extends Authenticatable
 {
     use HasFactory;
 
@@ -16,10 +17,19 @@ class Owner extends Model
      * @var array
      */
     protected $fillable = [
+        'username',
         'name',
         'phone',
         'address',
+        'password'
     ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['password'];
 
     /**
      * Get the company associated with the Owner

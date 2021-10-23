@@ -20,7 +20,9 @@ class CreateOwnersTable extends Migration
             $table->string('phone', 20)->nullable();
             $table->text('address')->nullable();
             $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
