@@ -24,6 +24,13 @@ class Company extends Model
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['password'];
+
+    /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool

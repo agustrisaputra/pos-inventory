@@ -1,8 +1,10 @@
 Ownes:
     - id
+    - username
     - name
     - phone
     - address
+    - password
 
 Companies:
     - id
