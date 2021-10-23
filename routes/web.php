@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\OwnerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,11 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix('/')
-    ->group(fn() => [
-        Route::prefix('owners')
-            ->group(fn() => [
-                Route::get('', [OwnerController::class, 'index'])->name('index'),
-                Route::post('', [OwnerController::class, 'store'])->name('store'),
-            ])
-    ]);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__.'/auth.php';
