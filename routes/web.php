@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::middleware(['auth'])
+    ->group(fn () => [
+        Route::get('/', fn () => view('dashboard'))->name('dashboard'),
 
-Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+        Route::prefix('products')
+            ->group(fn () => [
+            ]),
+    ]);
 
 require __DIR__.'/auth.php';
