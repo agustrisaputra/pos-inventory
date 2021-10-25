@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductCategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,9 +18,10 @@ Route::middleware(['auth'])
     ->group(fn () => [
         Route::get('/', fn () => view('dashboard'))->name('dashboard'),
 
-        Route::prefix('products')
-            ->group(fn () => [
-            ]),
+        Route::resource('product-categories', ProductCategoryController::class),
+        // Route::prefix('products')
+        //     ->group(fn () => [
+        //     ]),
     ]);
 
 require __DIR__.'/auth.php';

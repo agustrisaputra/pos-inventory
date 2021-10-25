@@ -14,16 +14,8 @@ Companies:
     - address
     - description
 
-Branches:
-    - id
-    - company_id
-    - name
-    - phone
-    - address
-
 Product Categories:
     - id
-    - company_id
     - name
     - created_at
     - updated_at

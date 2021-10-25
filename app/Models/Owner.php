@@ -29,7 +29,10 @@ class Owner extends Authenticatable
      *
      * @var array
      */
-    protected $hidden = ['password'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     /**
      * Get the company associated with the Owner
