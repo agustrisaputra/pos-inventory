@@ -15,7 +15,7 @@
             <a href="#" class="nav-link has-dropdown"><i class="fas fa-archive"></i><span>Produk</span></a>
             <ul class="dropdown-menu">
               <li class="active"><a class="nav-link" href="{{ route('product-categories.index') }}">Kategori Produk</a></li>
-              <li><a class="nav-link" href="index.html">Produk</a></li>
+              <li><a class="nav-link" href="{{ route('products.index') }}">Produk</a></li>
               <li><a class="nav-link" href="index.html">Paket</a></li>
             </ul>
           </li>

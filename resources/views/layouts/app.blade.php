@@ -22,6 +22,7 @@
         <link rel="stylesheet" href="{{ asset('assets/stisla/css/style.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/stisla/css/components.css') }}">
         <link href="//cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     </head>
     <body class="font-sans antialiased">
         <div id="app">
@@ -65,12 +66,29 @@
         <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
 
         <!-- Template JS File -->
         <script src="{{ asset('assets/stisla/js/scripts.js') }}"></script>
         <script src="{{ asset('assets/stisla/js/custom.js') }}"></script>
 
         <script>
+            function setPriceFormat() {
+                $('.price').each(function () {
+                    new Cleave(this, {
+                        numeral: true,
+                        numeralPositiveOnly: true,
+                        numeralDecimalMark: ',',
+                        delimiter: '.',
+                        numeralDecimalScale: 0,
+                        onlyPositive: true
+                    });
+                })
+            }
+
+            setPriceFormat()
+
             $('.ajax-form').submit(function(e) {
                 e.preventDefault()
                 let form = $(this)
@@ -181,6 +199,8 @@
                         field.data('daterangepicker').setEndDate(data);
                         return
                         }
+
+                        setPriceFormat()
 
                         if (field.hasClass('map-form')) {
                         $(`#${field.attr('id')}`).find('.map-box').locationpicker('location', {

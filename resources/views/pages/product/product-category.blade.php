@@ -49,7 +49,7 @@
 
             @slot('body')
                 <div class="form-group">
-                    <label for="Nama">Name</label>
+                    <label for="Nama">Nama</label>
                     <input type="text" class="form-control" name="name" id="name">
                 </div>
             @endslot
@@ -71,7 +71,7 @@
 
             @slot('body')
                 <div class="form-group">
-                    <label for="Nama">Name</label>
+                    <label for="Nama">Nama</label>
                     <input type="text" class="form-control" name="name" id="name">
                 </div>
             @endslot

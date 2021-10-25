@@ -23,10 +23,10 @@ class ProductCategoryRequest extends FormRequest
      */
     public function rules()
     {
-        $categoryId = optional($this->productCategory)->id;
+        $categoryId = optional($this->product_category)->id;
 
         return [
-            'name' => "required|unique:product_categories,name,NULL,{$categoryId},deleted_at,NULL"
+            'name' => "required|unique:product_categories,name,{$categoryId},id,deleted_at,NULL"
         ];
     }
 }

@@ -1,5 +1,5 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="{{ $id }}" aria-modal="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <form action="{{ $action }}" method="POST" class="ajax-form">
                 @csrf

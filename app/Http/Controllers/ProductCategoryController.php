@@ -51,7 +51,7 @@ class ProductCategoryController extends Controller
      */
     public function store(ProductCategoryRequest $request)
     {
-        $productCategory = new ProductCategory($request->all());
+        $productCategory = new ProductCategory($request->validated());
 
         $productCategory->save();
 
@@ -82,7 +82,7 @@ class ProductCategoryController extends Controller
      */
     public function update(ProductCategoryRequest $request, ProductCategory $productCategory)
     {
-        $productCategory->update($request->only('name'));
+        $productCategory->update($request->validated());
         return response()->json(['data' => ['message' => 'Data berhasil disimpan!']]);
     }
 
