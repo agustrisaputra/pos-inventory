@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductCategoryRequest;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use DataTables;
@@ -16,12 +17,24 @@ class ProductCategoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $productCategoires = ProductCategory::get();
+            $productCategoires = ProductCategory::orderBy('name')->get();
+
             return Datatables::of($productCategoires)
                     ->addIndexColumn()
-                    ->addColumn('action', function($row){
-                        $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
-                        return $btn;
+                    ->addColumn('action', function($productCategory){
+                        $edit = view('components.button-action', [
+                                        'get' => route('product-categories.edit', $productCategory->id),
+                                        'patch' => route('product-categories.update', $productCategory->id),
+                                        'target' => '#edit-product-category',
+                                        'label' => 'edit'
+                                    ]);
+                        $delete = view('components.button-action', [
+                                        'action' => route('product-categories.destroy', $productCategory->id),
+                                        'target' => '#delete-confirmation',
+                                        'label' => 'delete'
+                                    ]);
+
+                        return $edit . $delete;
                     })
                     ->rawColumns(['action'])
                     ->make(true);
@@ -31,39 +44,18 @@ class ProductCategoryController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductCategoryRequest $request)
     {
         $productCategory = new ProductCategory($request->all());
 
         $productCategory->save();
 
         return response()->json(['data' => ['message' => 'Data berhasil disimpan!']]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -74,7 +66,11 @@ class ProductCategoryController extends Controller
      */
     public function edit(ProductCategory $productCategory)
     {
-        //
+        return response()->json([
+                'data' => [
+                    'name' => $productCategory->name
+                ]
+            ]);
     }
 
     /**
@@ -84,9 +80,10 @@ class ProductCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ProductCategory $productCategory)
+    public function update(ProductCategoryRequest $request, ProductCategory $productCategory)
     {
-
+        $productCategory->update($request->only('name'));
+        return response()->json(['data' => ['message' => 'Data berhasil disimpan!']]);
     }
 
     /**
@@ -95,8 +92,10 @@ class ProductCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(ProductCategory $productCategory)
     {
-        //
+        $productCategory->delete();
+
+        return response()->json(['data' => ['message' => 'Data berhasil dihapus!']]);
     }
 }

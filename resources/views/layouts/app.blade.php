@@ -11,16 +11,17 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
         <!-- General CSS Files -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
         <!-- CSS Libraries -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+        <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+        <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 
         <!-- Template CSS -->
         <link rel="stylesheet" href="{{ asset('assets/stisla/css/style.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/stisla/css/components.css') }}">
-        <link href="//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+        <link href="//cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css" rel="stylesheet">
     </head>
     <body class="font-sans antialiased">
         <div id="app">
@@ -61,8 +62,9 @@
 
         <!-- JS Libraies -->
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 
         <!-- Template JS File -->
         <script src="{{ asset('assets/stisla/js/scripts.js') }}"></script>
@@ -142,6 +144,122 @@
                     }
                 })
             })
+
+            $('table').on('click', '.edit-btn', function () {
+                let button = $(this)
+                let modal = $(button.data('target'))
+
+                $.ajax({
+                    dataType: "json",
+                    url: $(this).data('get'),
+                    method: 'get',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend: function() {
+                    button.addClass('disabled')
+                    button.addClass('btn-progress')
+                    },
+                    complete: function(data) {
+                    button.removeClass('disabled')
+                    button.removeClass('btn-progress')
+                    },
+                    success: function(result) {
+                    $.each(result.data, function (name, data) {
+                        let field = modal.find('[name="' + name + '"]')
+
+                        if (field.hasClass('datepicker')) {
+                        field.datepicker('update', data)
+                        return
+                        }
+
+                        if (field.hasClass('daterangepicker-single')) {
+                        field.data('daterangepicker').setStartDate(data);
+                        field.data('daterangepicker').setEndDate(data);
+                        return
+                        }
+
+                        if (field.hasClass('map-form')) {
+                        $(`#${field.attr('id')}`).find('.map-box').locationpicker('location', {
+                            latitude: data[0],
+                            longitude: data[1]
+                        })
+                        $(`#${field.attr('id')}`).find('.loc-lat').val(data[0])
+                        $(`#${field.attr('id')}`).find('.loc-lng').val(data[1])
+                        return
+                        }
+
+                        if (field.prop('nodeName') == 'INPUT') {
+                        if (field.attr('type') == 'checkbox') {
+                            field.prop('checked', data)
+                        } else if (field.attr('type') == 'radio') {
+                            field.filter(`[value=${data}]`).prop('checked', true)
+                        } else {
+                            field.val(data)
+                        }
+
+                        if (field.hasClass('pwstrength')) {
+                            field.pwstrength("forceUpdate")
+                        }
+                        } else if (field.prop('nodeName') == 'TEXTAREA') {
+                        if (field.hasClass('ckeditor') || field.hasClass('ckeditor-image-upload')) {
+                            editors[field.attr('id')].setData(data)
+                        } else {
+                            field.val(data)
+                        }
+                        } else if (field.prop('nodeName') == 'IMG') {
+                        if (data) {
+                            field.attr('src', data)
+                        }
+                        } else if (field.prop('nodeName') == 'SELECT') {
+                        if (field.hasClass('select2-ajax')) {
+                            field.find('.current-option').remove()
+                            field.append(`<option value="${data.id}" class="current-option" selected="selected">${data.text}</option>`).trigger('change')
+                        } else {
+                            field.find(`option`).prop("selected", false).trigger('change')
+
+                            if (Array.isArray(data)) {
+                            field.select2().val(data).trigger('change')
+                            } else if (data) {
+                            field.find(`option[value='${data}']`).prop("selected", true).trigger('change')
+                            }
+                        }
+                        } else if (field.prop('nodeName') == 'SPAN' || field.prop('nodeName') == 'DIV') {
+                        if (field.hasClass('tab-content')) {
+                            field.parents('form').find('.tab-pane').removeClass('show active')
+                            field.parents('form').find(`[data-radio=${data}]`).addClass('show active')
+
+                            return
+                        }
+                        field.text(data)
+                        }
+                    })
+
+                    modal.modal('show')
+
+                    if (result.run) {
+                        window[result.run]()
+                    }
+                    },
+                    error: function(err){
+                    console.log(err)
+                    }
+                })
+
+                if ($(this).data('patch')) {
+                    modal.find('form').get(0).setAttribute('action', $(this).data('patch'))
+                }
+            })
+
+            $('table').on('click', '.delete-confirm-btn', function () {
+                let button = $(this)
+                let modal = $(button.data('target'))
+                modal.find('form').get(0).setAttribute('action', $(this).data('action'));
+                modal.modal('show');
+            });
         </script>
 
         @isset($script)
